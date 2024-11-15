@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import SceneInit from './lib/SceneInit';
-import { loadGLTFModel, loadFBXModel } from './lib/ModelRend';
+import { loadGLTFModel, loadFBXModel, setupAnimations, setupAnimationLoop } from './lib/ModelRend';
 import * as THREE from 'three';
 
 function App ()
@@ -11,10 +11,10 @@ function App ()
     test.initialize();
     test.animate();
 
-    const mixers = []; // Array to store mixers for each animated model
+    const mixers = [];
     const clock = new THREE.Clock();
 
-    // Load GLTF Model 1
+    // Load Ichiban GLTF Model
     loadGLTFModel(
       test.scene,
       './assets/ichiban/scene.gltf',
@@ -23,36 +23,22 @@ function App ()
       [ 5, 5, 5 ]
     ).then( ( gltf ) =>
     {
-      if ( gltf.animations && gltf.animations.length > 0 )
-      {
-        const mixer = new THREE.AnimationMixer( gltf.scene );
-        gltf.animations.forEach( ( clip ) =>
-        {
-          mixer.clipAction( clip ).play();
-        } );
-        mixers.push( mixer );
-      }
+      setupAnimations( gltf, mixers );
     } );
 
-    // Load GLTF Model 2
-    // loadGLTFModel(
-    //   test.scene,
-    //   './assets/cloudstrife/source/cloud-psk.glb',
-    //   [ 1, -2, 0 ],
-    //   Math.PI * 3 / 2,
-    //   [ 8, 8, 8 ]
-    // ).then( ( gltf ) =>
-    // {
-    //   if ( gltf.animations && gltf.animations.length > 0 )
-    //   {
-    //     const mixer = new THREE.AnimationMixer( gltf.scene );
-    //     gltf.animations.forEach( ( clip ) =>
-    //     {
-    //       mixer.clipAction( clip ).play();
-    //     } );
-    //     mixers.push( mixer );
-    //   }
-    // } );
+    // Load Cloud GLTF Model
+    loadGLTFModel(
+      test.scene,
+      './assets/cloudstrife/source/cloud-psk.glb',
+      [ 1, -2, 0 ],
+      Math.PI * 3 / 2,
+      [ 8, 8, 8 ]
+    ).then( ( gltf ) =>
+    {
+      setupAnimations( gltf, mixers );
+    } );
+
+    // Load Shark GLTF Model
     loadGLTFModel(
       test.scene,
       './assets/shark_fish_megalodon/scene.gltf',
@@ -61,18 +47,10 @@ function App ()
       [ 8, 8, 8 ]
     ).then( ( gltf ) =>
     {
-      if ( gltf.animations && gltf.animations.length > 0 )
-      {
-        const mixer = new THREE.AnimationMixer( gltf.scene );
-        gltf.animations.forEach( ( clip ) =>
-        {
-          mixer.clipAction( clip ).play();
-        } );
-        mixers.push( mixer );
-      }
+      setupAnimations( gltf, mixers );
     } );
 
-    // Load FBX Model
+    // Load 2B FBX Model
     loadFBXModel(
       test.scene,
       'assets/Nier_2b/source/2b model rigging.fbx',
@@ -80,30 +58,12 @@ function App ()
       [ 0.1, 0.1, 0.1 ]
     ).then( ( fbx ) =>
     {
-      if ( fbx.animations && fbx.animations.length > 0 )
-      {
-        const mixer = new THREE.AnimationMixer( fbx );
-        fbx.animations.forEach( ( clip ) =>
-        {
-          mixer.clipAction( clip ).play();
-        } );
-        mixers.push( mixer );
-      }
+      setupAnimations( fbx, mixers );
     } );
 
-    // Animation loop
-    const animate = () =>
-    {
-      requestAnimationFrame( animate );
+    // Start animation loop
+    setupAnimationLoop( test, mixers, clock );
 
-      // Update mixers
-      const delta = clock.getDelta();
-      mixers.forEach( ( mixer ) => mixer.update( delta ) );
-
-      test.render();
-      test.controls.update();
-    };
-    animate();
   }, [] );
 
   return (

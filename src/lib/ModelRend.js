@@ -2,6 +2,16 @@ import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+export const setupAnimations = (model, mixers) => {
+  if (model.animations && model.animations.length > 0) {
+    const mixer = new THREE.AnimationMixer(model.scene || model);
+    model.animations.forEach((clip) => {
+      mixer.clipAction(clip).play();
+    });
+    mixers.push(mixer);
+  }
+};
+
 export const loadGLTFModel = (scene, path, position, rotation, scale) => {
   const loader = new GLTFLoader();
   return new Promise((resolve, reject) => {
@@ -50,4 +60,12 @@ export const loadFBXModel = (scene, path, position, scale) => {
       }
     );
   });
+};
+
+export const setupAnimationLoop = (test, mixers, clock) => {
+  requestAnimationFrame(() => setupAnimationLoop(test, mixers, clock));
+  const delta = clock.getDelta();
+  mixers.forEach((mixer) => mixer.update(delta));
+  test.render();
+  test.controls.update();
 };
