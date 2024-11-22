@@ -67,18 +67,4 @@ This module handles the upload functionality for 3D models. It:
 - Uploads files to a Supabase bucket with a unique filename.
 - Tracks upload progress and retrieves a public URL for the uploaded file.
 
----
-
-## **Usage**
-
-### **1. Rendering 3D Models**
-- Use `loadGLTFModel` or `loadFBXModel` to load and display 3D models in the scene.
-- Call `setupAnimations` for animating models with built-in animation clips.
-- Use `setupAnimationLoop` to ensure the animations run smoothly.
-
-### **2. Uploading 3D Models**
-- The upload button triggers the `createFileUploader` function.
-- The uploaded file is stored in the Supabase bucket, and a public URL is returned for further use.
-
----
 ```
