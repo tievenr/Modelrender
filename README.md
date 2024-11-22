@@ -66,5 +66,3 @@ This module handles the upload functionality for 3D models. It:
 - Validates model files (.gltf, .glb, .fbx).
 - Uploads files to a Supabase bucket with a unique filename.
 - Tracks upload progress and retrieves a public URL for the uploaded file.
-
-```
