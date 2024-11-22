@@ -12,7 +12,7 @@ This repository is a foundational setup for creating, rendering, and uploading 3
 ### **1. Clone the Repository**
 
 ```bash
-git clone https://github.com/tievenr/Modelrender/.git
+git clone https://github.com/tievenr/Modelrender.git
 cd Modelrender
 ```
 
