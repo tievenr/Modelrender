@@ -1,60 +1,54 @@
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import SceneInit from "./lib/SceneInit";
-import
-  {
-    loadGLTFModel,
-    loadFBXModel,
-    setupAnimations,
-    setupAnimationLoop,
-  } from "./lib/ModelRend";
+import {
+  loadGLTFModel,
+  loadFBXModel,
+  setupAnimations,
+  setupAnimationLoop,
+} from "./lib/ModelRend";
 import { createFileUploader } from "./lib/uploadUtilis";
 
-function App ()
-{
-  const [ uploading, setUploading ] = useState( false );
-  const [ uploadProgress, setUploadProgress ] = useState( 0 );
-  const [ latestModel, setLatestModel ] = useState( null );
-  const [ sceneInstance, setSceneInstance ] = useState( null );
-  const [ mixers, setMixers ] = useState( [] );
-  const [ error, setError ] = useState( null );
+function App() {
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [latestModel, setLatestModel] = useState(null);
+  const [sceneInstance, setSceneInstance] = useState(null);
+  const [mixers, setMixers] = useState([]);
+  const [error, setError] = useState(null);
 
-  useEffect( () =>
-  {
-    const test = new SceneInit( "myThreeJsCanvas" );
+  useEffect(() => {
+    const test = new SceneInit("myThreeJsCanvas");
     test.initialize();
     test.animate();
 
     const newMixers = [];
     const clock = new THREE.Clock();
-    setupAnimationLoop( test, newMixers, clock );
+    setupAnimationLoop(test, newMixers, clock);
 
-    setSceneInstance( test );
-    setMixers( newMixers );
-  }, [] );
+    setSceneInstance(test);
+    setMixers(newMixers);
+  }, []);
 
   // Use the extracted upload utility
   const handleUpload = createFileUploader(
-    setError,
-    setUploading,
-    setUploadProgress,
+    setError, 
+    setUploading, 
+    setUploadProgress, 
     setLatestModel
   );
 
-  const loadModelIntoScene = ( model ) =>
-  {
-    const position = [ 0, 0, 0 ];
-    const scale = [ 0.5, 0.5, 0.5 ];
+  const loadModelIntoScene = (model) => {
+    const position = [0, 0, 0];
+    const scale = [0.5, 0.5, 0.5];
 
-    if ( model.url.endsWith( ".fbx" ) )
-    {
-      loadFBXModel( sceneInstance.scene, model.url, position, scale ).then( ( fbx ) =>
-        setupAnimations( fbx, mixers )
+    if (model.url.endsWith(".fbx")) {
+      loadFBXModel(sceneInstance.scene, model.url, position, scale).then((fbx) =>
+        setupAnimations(fbx, mixers)
       );
-    } else
-    {
-      loadGLTFModel( sceneInstance.scene, model.url, position, 0, scale ).then( ( gltf ) =>
-        setupAnimations( gltf, mixers )
+    } else {
+      loadGLTFModel(sceneInstance.scene, model.url, position, 0, scale).then((gltf) =>
+        setupAnimations(gltf, mixers)
       );
     }
   };
@@ -83,21 +77,22 @@ function App ()
         <div className="flex flex-col items-center gap-4">
           <button
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 
-              ${ uploading
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 hover:shadow-lg"
+              ${
+                uploading
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 hover:shadow-lg"
               }`}
             onClick={handleUpload}
             disabled={uploading}
           >
-            {uploading ? `Uploading... ${ uploadProgress }%` : "Upload 3D Model"}
+            {uploading ? `Uploading... ${uploadProgress}%` : "Upload 3D Model"}
           </button>
 
           {uploading && (
             <div className="w-64 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 transition-all duration-200"
-                style={{ width: `${ uploadProgress }%` }}
+                style={{ width: `${uploadProgress}%` }}
               />
             </div>
           )}
@@ -114,7 +109,7 @@ function App ()
               <button
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 active:bg-green-800 
                   text-white rounded-lg text-sm font-medium transition-colors duration-200"
-                onClick={() => loadModelIntoScene( latestModel )}
+                onClick={() => loadModelIntoScene(latestModel)}
               >
                 Load Model
               </button>
