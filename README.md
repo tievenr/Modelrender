@@ -12,8 +12,8 @@ This repository is a foundational setup for creating, rendering, and uploading 3
 ### **1. Clone the Repository**
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/tievenr/Modelrender/.git
+cd Modelrender
 ```
 
 ### **2. Install Dependencies**
@@ -30,12 +30,13 @@ This will install all the required packages, including Three.js and Supabase lib
 
 - Set up a [Supabase](https://supabase.com) project.
 - Create a bucket in Supabase storage to store the 3D models.
-- Copy your Supabase URL and API key and add them to a `.env` file in the project root:
+- Copy your Supabase URL, anonymous key, and bucket name, then add them to a `.env` file in the project root:
 
   ```env
-  SUPABASE_URL=<your-supabase-url>
-  SUPABASE_KEY=<your-supabase-key>
-  ```
+  VITE_SUPABASE_URL=<your-supabase-url>
+  VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+  VITE_SUPABASE_BUCKET_NAME=<your-supabase-bucket-name>
+
 
 ### **4. Start the Development Server**
 
@@ -44,12 +45,6 @@ Run the following command to start the development server:
 ```bash
 npm run dev
 ```
-
-Visit `http://localhost:3000` in your browser to access the application.
-
----
-
-## **Directory Structure**
 
 ### **/lib/SceneInit.js**
 
@@ -84,13 +79,6 @@ This module handles the upload functionality for 3D models. It:
 ### **2. Uploading 3D Models**
 - The upload button triggers the `createFileUploader` function.
 - The uploaded file is stored in the Supabase bucket, and a public URL is returned for further use.
-
----
-
-## **Future Improvements**
-- Extend support for additional file formats like `.obj`.
-- Add UI feedback for error handling during file uploads.
-- Optimize rendering for high-poly models.
 
 ---
 ```
