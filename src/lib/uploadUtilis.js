@@ -27,8 +27,10 @@ export const createFileUploader = (
         setUploading(true);
 
         const fileName = `${uuidv4()}.${fileExtension}`;
+        const bucketName = import.meta.env.VITE_SUPABASE_BUCKET_NAME;
+
         const { data, error } = await supabase.storage
-          .from('ModelDump')
+          .from(bucketName)
           .upload(fileName, file, {
             cacheControl: '3600',
             onUploadProgress: (progress) => {
@@ -40,7 +42,7 @@ export const createFileUploader = (
         if (error) throw error;
 
         const { data: publicUrlData } = supabase.storage
-          .from('ModelDump')
+          .from(bucketName)
           .getPublicUrl(fileName);
 
         setLatestModel({ name: file.name, url: publicUrlData.publicUrl });
