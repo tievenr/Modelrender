@@ -1,26 +1,24 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import Stats from 'three/examples/jsm/libs/stats.module';
 
-export default class SceneInit {
+export default class ModelRender {
   constructor(canvasId) {
-    // NOTE: Core components to initialize Three.js app.
+    // Core components for Three.js initialization
     this.scene = undefined;
     this.camera = undefined;
     this.renderer = undefined;
 
-    // NOTE: Camera params;
+    // Camera params
     this.fov = 45;
     this.nearPlane = 1;
     this.farPlane = 1000;
     this.canvasId = canvasId;
 
-    // NOTE: Additional components.
+    // Additional components
     this.clock = undefined;
-    this.stats = undefined;
     this.controls = undefined;
 
-    // NOTE: Lighting is basically required.
+    // Lighting
     this.ambientLight = undefined;
     this.directionalLight = undefined;
   }
@@ -29,72 +27,63 @@ export default class SceneInit {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       this.fov,
-      window.innerWidth / window.innerHeight,
-      1,
-      1000
+      window.innerWidth / window.innerHeight, // Will be updated dynamically later
+      this.nearPlane,
+      this.farPlane
     );
     this.camera.position.z = 48;
 
-    // NOTE: Specify a canvas which is already created in the HTML.
+    // Specify the canvas
     const canvas = document.getElementById(this.canvasId);
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      // NOTE: Anti-aliasing smooths out the edges.
       antialias: true,
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    // this.renderer.shadowMap.enabled = true;
+
+    // Dynamically set the size based on the canvas container's size
+    const parent = canvas.parentElement;
+    const width = parent.offsetWidth;
+    const height = parent.offsetHeight;
+    this.renderer.setSize(width, height);
+
     document.body.appendChild(this.renderer.domElement);
 
+    // Initialize clock and controls
     this.clock = new THREE.Clock();
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.stats = Stats();
-    document.body.appendChild(this.stats.dom);
 
-    // ambient light which is for the whole scene
+    // Lighting
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     this.ambientLight.castShadow = true;
     this.scene.add(this.ambientLight);
 
-    // directional light - parallel sun rays
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-    // this.directionalLight.castShadow = true;
     this.directionalLight.position.set(0, 32, 64);
     this.scene.add(this.directionalLight);
 
-    // if window resizes
+    // Window resize handling
     window.addEventListener('resize', () => this.onWindowResize(), false);
-
-    // NOTE: Load space background.
-    // this.loader = new THREE.TextureLoader();
-    // this.scene.background = this.loader.load('./pics/space.jpeg');
-
-    // NOTE: Declare uniforms to pass into glsl shaders.
-    // this.uniforms = {
-    //   u_time: { type: 'f', value: 1.0 },
-    //   colorB: { type: 'vec3', value: new THREE.Color(0xfff000) },
-    //   colorA: { type: 'vec3', value: new THREE.Color(0xffffff) },
-    // };
   }
 
   animate() {
-    // NOTE: Window is implied.
-    // requestAnimationFrame(this.animate.bind(this));
     window.requestAnimationFrame(this.animate.bind(this));
     this.render();
-    this.stats.update();
     this.controls.update();
   }
 
   render() {
-    // NOTE: Update uniform data on each render.
-    // this.uniforms.u_time.value += this.clock.getDelta();
     this.renderer.render(this.scene, this.camera);
   }
 
   onWindowResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    const canvas = this.renderer.domElement;
+    const parent = canvas.parentElement;
+    const width = parent.offsetWidth;
+    const height = parent.offsetHeight;
+
+    // Update camera and renderer size based on the new container size
+    this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(width, height);
   }
 }
